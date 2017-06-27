@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.alivc.player.AccessKeyCallback;
 import com.alivc.player.AliVcMediaPlayer;
 import com.alivc.player.MediaPlayer;
 import com.easyway.vcc.net.Application;
+import com.easyway.vcc.serial.SerialPortActivity;
 import com.ewivt.vhs.dto.request.EndHelpRequest;
 import com.ewivt.vhs.dto.request.HelpRequest;
 import com.ewivt.vhs.dto.response.HelpResponse;
@@ -30,7 +32,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 
-public class VideoChatActivity extends AppCompatActivity implements View.OnClickListener {
+public class VideoChatActivity extends SerialPortActivity implements View.OnClickListener {
 
     public static final String STREAM_SERVER = "rtmp://10.100.103.13/live";
     public static final String CLIENT_NAME = "Client0001";
@@ -50,6 +52,7 @@ public class VideoChatActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("VCC", "VideoChatActivity onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_chat);
 
@@ -62,6 +65,7 @@ public class VideoChatActivity extends AppCompatActivity implements View.OnClick
 
 
         txtLog = (EditText) findViewById(R.id.txt_log);
+        txtLog.setFocusable(false);
 
         AliVcMediaPlayer.init(getApplicationContext(), "", new AccessKeyCallback() {
             public AccessKey getAccessToken() {
@@ -83,6 +87,11 @@ public class VideoChatActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
+    }
+
+    @Override
+    protected void onButtonUp() {
+        finish();
     }
 
 
@@ -267,5 +276,11 @@ public class VideoChatActivity extends AppCompatActivity implements View.OnClick
 
     private void log(String msg) {
         txtLog.append(msg + "\r\n");
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("VCC", "SerialPortTestActivity onDestroy");
+        super.onDestroy();
     }
 }
